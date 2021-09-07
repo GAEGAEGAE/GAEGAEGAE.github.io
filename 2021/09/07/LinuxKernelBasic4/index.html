@@ -18,7 +18,7 @@
   <meta name="author" content="G4EG4EGAE">
   <meta name="keywords" content="">
   
-  <title>[Research] Linux Kernel Basic - (3) 커널에서의 메모리 할당 2편 - Hexo</title>
+  <title>[Research] Linux Kernel Basic - (4) 커널에서의 메모리 할당 2편 - Hexo</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
 
@@ -163,7 +163,7 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="[Research] Linux Kernel Basic - (3) 커널에서의 메모리 할당 2편">
+            <span class="h2" id="subtitle" title="[Research] Linux Kernel Basic - (4) 커널에서의 메모리 할당 2편">
               
             </span>
 
@@ -225,10 +225,10 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">[Research] Linux Kernel Basic - (3) 커널에서의 메모리 할당 2편</h1>
+            <h1 style="display: none">[Research] Linux Kernel Basic - (4) 커널에서의 메모리 할당 2편</h1>
             
             <div class="markdown-body">
-              <h2 id="Research-Linux-Kernel-Basic-3-커널에서의-메모리-할당-2편"><a href="#Research-Linux-Kernel-Basic-3-커널에서의-메모리-할당-2편" class="headerlink" title="[Research] Linux Kernel Basic - (3) 커널에서의 메모리 할당 2편"></a>[Research] Linux Kernel Basic - (3) 커널에서의 메모리 할당 2편</h2><p><img src="/img/penguinshot.png" srcset="/img/loading.gif" lazyload></p>
+              <h2 id="Research-Linux-Kernel-Basic-4-커널에서의-메모리-할당-2편"><a href="#Research-Linux-Kernel-Basic-4-커널에서의-메모리-할당-2편" class="headerlink" title="[Research] Linux Kernel Basic - (4) 커널에서의 메모리 할당 2편"></a>[Research] Linux Kernel Basic - (4) 커널에서의 메모리 할당 2편</h2><p><img src="/img/penguinshot.png" srcset="/img/loading.gif" lazyload></p>
 <h2 id="서론"><a href="#서론" class="headerlink" title="서론"></a>서론</h2><p>해당 포스트에서는 리눅스 커널(Linux Kernel)에서도 연산을 수행하기 위해서 데이터가 저장되어야만 하는 공간이 있어야 한다. 이러한 공간의 주체는 메모리(memory)이며 리눅스 커널(Linux Kernel)에서의 메모리의 할당 방식을 알아본다. 포스트 작성에 앞서 오늘의 미팅에서 배웠던 이야기 주제로 자료조사를 진행하며 작성하며 b30W0lf님은 매우 잘 가르쳐주셨지만 무지성 침팬지 나의 두뇌 때문에 잘못된 내용이 있을 수 있음을 밝힌다.</p>
 <h2 id="리눅스-시스템에서의-메모리-할당"><a href="#리눅스-시스템에서의-메모리-할당" class="headerlink" title="리눅스 시스템에서의 메모리 할당"></a>리눅스 시스템에서의 메모리 할당</h2><p>일반적인 리눅스 시스템의 경우는 물리적 메모리를 가지고 있으며 이를 프로세스가 사용할 수 있도록 페이지의 단위로 할당한다. 페이지의 경우는 일반적으로 4KB(0x1000)의 크기를 가지고 있다. 이는 alloc_pages() 함수를 이용해 할당받을 수 있다. </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs &#123;c&#125;">unsigned long __get_free_pages(gfp_t gfp_mask, unsigned int order)<br>&#123;<br>	struct page *page;<br><br>	page = alloc_pages(gfp_mask &amp; ~__GFP_HIGHMEM, order);<br>	if (!page)<br>		return 0;<br>	return (unsigned long) page_address(page);<br>&#125;<br></code></pre></td></tr></table></figure>
